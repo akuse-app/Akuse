@@ -26,13 +26,14 @@ git clone https://github.com/akuse-app/Akuse.git
 ```
 
 Next, go to [this link](https://anilist.co/settings/developer) and create a new AniList API Client.
-As Redirect Uri, you can insert akuse://index and it should work.
+As Redirect Uri, you can insert `akuse://index,https://anilist.co/api/v2/oauth/pin` (these are two space seprated uri) and it should work.
 Now go inside the src/modules folder and create a clientData.js file with a structure like this:
 
 ```
 module.exports = {
     clientId: ,
     redirectUri: "",
+    redirectUriAppImage:"",
     clientSecret: ""
 }
 ```
@@ -44,6 +45,7 @@ Fill it with the data retrieved from the creation of your AniList API Client.
 module.exports = {
     clientId: 12345,
     redirectUri: "akuse://index",
+    redirectUriAppImage: "https://anilist.co/api/v2/oauth/pin",
     clientSecret: "iA04TKLO3k3LaVWhxucJwck0glR6uhiv"
 }
 ```
@@ -59,27 +61,53 @@ To start, run:
 ```
 npm start
 ```
+## 🛠️ How to build
 
-## ⚠ How to Log-In in development
+- [Linux read here](./LINUX_BUILD.md)
 
-In development, the Log-In redirect doesn't work since the app is not packed and the Redirect Uri doesn't find it on your machine. If you need to work with an authenticated instance, just distribute the app (```npm run dist:win``` for Windows, other scripts are in package.json file) and Log-In from there once. After that, your app will be authenticated also in development mode.
+## ⚠ How to Log-In in development & AppImage
 
+In development and AppImage, the Log-In redirect doesn't work since the app is not packed/installed and the Redirect Uri doesn't find it on your machine. If you need to work with an authenticated instance. 
+### Follow  steps:
+1. open the app using one of the method e.g.
+    ```
+    npm start
+    ```
+      OR
+    ```
+    ./path/to/app.AppImage
+    ```
+2. Now click on the login button and authenticate in the browser. you will get redirect to website like this:-
+
+    ![1709734157317](image/README/1709734157317.png)
+
+    copy this code in the input box and close the tab.
+3. Now close the app and run it with flag `--login` followd by code e.g:- 
+    - developement mode 
+      ```js
+        npm start -- --login def50200211627a77c5ecb3ac3f9eef26d955...........
+      ```
+    - AppImage
+      ```js
+        ./path/to/akuse.AppImage --login def50200211627a77c5ecb3ac3f9eef26d955...........
+      ```
+**NOTE:** This is not needed in Installed App.
 ## ⌨ Shortcuts
 
 - Pages
-    - F1: go to Discover page
-    - F2: go to Library page
-    - F3: go to Search page
+  - F1: go to Discover page
+  - F2: go to Library page
+  - F3: go to Search page
 - Video player
-    - Space: play/pause video
-    - Left arrow: fast rewind (5s)
-    - Right arrow: fast forward (5s)
-    - Upper arrow: increase volume
-    - Lower arrow: decrease volume
-    - F11: fullscreen toggler
-    - F: fullscreen toggler
-    - M: mute/unmute video
-    - N: play next episode
+  - Space: play/pause video
+  - Left arrow: fast rewind (5s)
+  - Right arrow: fast forward (5s)
+  - Upper arrow: increase volume
+  - Lower arrow: decrease volume
+  - F11: fullscreen toggler
+  - F: fullscreen toggler
+  - M: mute/unmute video
+  - N: play next episode
 
 ## 🐛 Known Issues
 

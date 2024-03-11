@@ -22,6 +22,7 @@
         "appId": "com.electron.akuse",
         "productName": "Akuse",
         "copyright": "Copyright © 2023 Alessio Ganzarolli",
+        "asarUnpack":"assets/**",
         "mac": {
             "target": "dmg",
             "hardenedRuntime": true,
@@ -77,6 +78,7 @@
                 "Type": "Application",
                 "MimeType": "x-scheme-handler/akuse;"
             },
+            "icon":"assets/img/linux-icons/",
             "target": [
                 {
                     "arch": "x64",
@@ -85,9 +87,21 @@
                 {
                     "arch": "x64",
                     "target": "deb"
+                },
+                {
+                    "arch": "x64",
+                    "target": "rpm"
+                },
+                {
+                    "arch":"x64",
+                    "target":"flatpak"
                 }
-            ]
-        }
+            ]  
+        },
+        "flatpak":{
+            "runtimeVersion":"23.08",
+            "baseVersion":"23.08"
+         }
     },
     "author": "aleganza <ganzarolli.alessio@gmail.com>",
     "license": "GPL-3.0-or-later",
