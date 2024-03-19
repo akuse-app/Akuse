@@ -75,6 +75,8 @@ const createWindow = () => {
         }
     })
 
+    //mainWin.webContents.openDevTools()
+
     mainWin.loadFile(__dirname + '/windows/index.html')
     mainWin.setBackgroundColor('#0c0b0b')
 

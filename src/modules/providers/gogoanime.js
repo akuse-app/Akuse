@@ -25,37 +25,35 @@ module.exports = class Gogoanime {
      * @returns -1 if could not get the animeId or the animeEpisodeId
      */
     async getEpisodeUrl(animeSearch, episode, dubbed) {
-        const animeId = await this.getAnimeId(dubbed ? `${animeSearch} (Dub)` : animeSearch)
-        if (animeId == -1) return -1
+        const searchQuery = dubbed ? `${animeSearch} (Dub)` : animeSearch;
 
-        const animeEpisodeId = await this.getAnimeEpisodeId(animeId, episode)
-        if(animeEpisodeId === undefined) return -1
+        // Get animeId
+        let animeId = await this.getAnimeId(searchQuery);
+        if (animeId == -1) {
+            console.log(`Could not get dub for: ${searchQuery}`);
+            animeId = await this.getAnimeId(animeSearch);
+        };
 
-        const data = await this.consumet.fetchEpisodeSources(animeEpisodeId)
+        if (animeId == -1) return -1;
 
-        // looking for the best resolution
-        for(let i=0; i<Object.keys(data.sources).length; i++) {
-            if(data.sources[i].quality == '1080p') {
-                console.log('Playing episode in ' + data.sources[i].quality)
-                return data.sources[i]
+        // Get animeEpisodeId
+        const animeEpisodeId = await this.getAnimeEpisodeId(animeId, episode);
+        if (animeEpisodeId === undefined) return -1;
+
+        // Fetch episode sources
+        const data = await this.consumet.fetchEpisodeSources(animeEpisodeId);
+
+        // Get the source with the best resolution
+        const resolutions = ['1080p', '720p', 'default'];
+        for (const resolution of resolutions) {
+            const source = data.sources.find(src => src.quality === resolution);
+            if (source) {
+                console.log(`Playing episode in ${source.quality}`);
+                return source;
             }
         }
 
-        for(let i=0; i<Object.keys(data.sources).length; i++) {
-            if(data.sources[i].quality == '720p') {
-                console.log('Playing episode in ' + data.sources[i].quality)
-                return data.sources[i]
-            }
-        }
-        
-        for(let i=0; i<Object.keys(data.sources).length; i++) {
-            if(data.sources[i].quality == 'default') {
-                console.log('Playing episode in ' + data.sources[i].quality)
-                return data.sources[i]
-            }
-        }
-
-        return data.sources[0]
+        return data.sources[0];
     }
 
     /**
@@ -67,7 +65,7 @@ module.exports = class Gogoanime {
      */
     async getAnimeId(animeSearch) {
         const data = await this.consumet.search(animeSearch)
-        
+
         if (data.results.length !== 0) {
             return data.results[0].id
         } else {
@@ -84,6 +82,6 @@ module.exports = class Gogoanime {
      */
     async getAnimeEpisodeId(animeId, episode) {
         const data = await this.consumet.fetchAnimeInfo(animeId)
-        return data.episodes[episode-1]?.id
+        return data.episodes[episode - 1]?.id
     }
 }
