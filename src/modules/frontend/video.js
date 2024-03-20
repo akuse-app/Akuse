@@ -13,7 +13,7 @@ const animeCustomTitles = require('../animeCustomTitles')
  * @class
 */
 module.exports = class Video {
-    
+
     /**
      * @constructor
      */
@@ -47,7 +47,7 @@ module.exports = class Video {
      * @returns the respective Object to the streaming source
      */
     getSourceFlagObject() {
-        switch(this.store.get('source_flag')) {
+        switch (this.store.get('source_flag')) {
             case 'US': {
                 return new Gogoanime()
             }
@@ -74,14 +74,14 @@ module.exports = class Video {
             let title = Object.values(anime_titles_div)[key].innerHTML
 
             animeTitles.push(title)
-            
-            if(title.includes('Season ')) 
+
+            if (title.includes('Season '))
                 animeTitles.push(title.replace('Season ', ''))
-            if(title.includes('Season ') && title.includes('Part ')) 
+            if (title.includes('Season ') && title.includes('Part '))
                 animeTitles.push(title.replace('Season ', '').replace('Part ', ''))
-            if(title.includes('Part ')) 
+            if (title.includes('Part '))
                 animeTitles.push(title.replace('Part ', ''))
-            if(title.includes(':')) 
+            if (title.includes(':'))
                 animeTitles.push(title.replace(':', ''))
         })
 
@@ -102,7 +102,7 @@ module.exports = class Video {
             ? this.dynamicSettingsUpdateProgress.checked = true
             : this.dynamicSettingsUpdateProgress.checked = false
     }
-    
+
     /**
      * Displays and plays the episode video
      * 
@@ -110,9 +110,10 @@ module.exports = class Video {
      * @param {*} time time to play the video
      */
     async displayVideo(episode, time = 0) {
+
         console.log(episode)
         this.container.style.display = 'block'
-        
+
         const cons = this.getSourceFlagObject()
         const animeId = episode.split('-')[1]
         const episodeId = episode.split('-')[2]
@@ -121,14 +122,14 @@ module.exports = class Video {
         const episodeDescription = document.querySelector(`#anime-page-${animeId} .episode-entry#episode-${animeId}-${episodeId} .description`).innerHTML
         const animeTitles = this.getParsedAnimeTitles()
         const customTitle = animeCustomTitles[this.store.get('source_flag')][animeId]
-        
+
         this.nextEpisodeBtn.classList.add('show-next-episode-btn')
-        if(this.isLastAvailableEpisode(episodeId))
+        if (this.isLastAvailableEpisode(episodeId))
             this.nextEpisodeBtn.classList.remove('show-next-episode-btn')
 
         console.log('Looking for sources...')
 
-        if(customTitle !== undefined) animeTitles.unshift(customTitle)
+        if (customTitle !== undefined) animeTitles.unshift(customTitle)
 
         // at do-while end videoSource will be -1 if nothing is found, otherwise the episode source
         let i = 0
@@ -136,20 +137,24 @@ module.exports = class Video {
             var videoSource = await cons.getEpisodeUrl(animeTitles[i], episodeId, this.store.get('dubbed'))
 
             videoSource != -1
-            ? console.log(`%c ${animeTitles[i]} -> ${videoSource.url}`, `color: #45AD67`)
-            : console.log(`%c ${animeTitles[i]}`, `color: #E5A639`)
+                ? console.log(`%c ${animeTitles[i]} -> ${videoSource.url}`, `color: #45AD67`)
+                : console.log(`%c ${animeTitles[i]}`, `color: #E5A639`)
 
             i++
-        } while(videoSource === -1 && i < animeTitles.length)
+        } while (videoSource === -1 && i < animeTitles.length)
 
         // play episode if source is found, otherwise hide video player
-        if(videoSource !== -1) {
+        if (videoSource !== -1) {
+
+            // store current animeID and episodeId for listing currently playing anime episodes and highlight currently playing
+            localStorage.setItem("seasonInfo", JSON.stringify({ animeId, episodeId }));
+
             this.displayDynamicSettingsOptions()
 
             this.videoTitle.innerHTML = title
             this.videoEpisode.innerHTML = episodeId
             this.videoEpisodeTitle.innerHTML = episodeTitle
-            
+
             this.pauseInfoAnimeTitle.innerHTML = title
             this.pauseInfoEpisodeTitle.innerHTML = episodeTitle
             this.pauseInfoEpisodeDescription.innerHTML = episodeDescription
@@ -158,12 +163,12 @@ module.exports = class Video {
             this.videoElement.currentTime = time
 
             // if play an episode and immediately close the player, do not load episode
-            if(this.container.style.display == 'block')
+            if (this.container.style.display == 'block')
                 this.videoElement.play()
         } else {
             // suppose that time is not 0 only when the video is changed inside the video player (language or dub/sub togglers)
             // so in that case, don't hide the video player
-            if(time === 0)
+            if (time === 0)
                 this.container.style.display = 'none'
         }
     }
@@ -175,7 +180,7 @@ module.exports = class Video {
         const animeId = document.querySelector('#persistent-data-common .persdata-anime-id').innerHTML
         const progress = this.videoEpisode.innerHTML
 
-        if(this.store.get('update_progress')) {
+        if (this.store.get('update_progress')) {
             console.log(animeId, progress)
             this.anilist.updateAnimeProgress(animeId, progress)
 
@@ -201,19 +206,22 @@ module.exports = class Video {
         const episodeDescription = document.querySelector(`#anime-page-${animeId} .episode-entry#episode-${animeId}-${episodeId} .description`).innerHTML
         let animeTitles = this.getParsedAnimeTitles()
         const customTitle = animeCustomTitles[this.store.get('source_flag')][animeId]
-        
+
+        // "update list when user goes to next ep" store current animeID and episodeId for listing currently playing anime episodes and highlight currently playing
+        localStorage.setItem("seasonInfo", JSON.stringify({ animeId, episodeId }));
+
         this.videoElement.src = null
         this.nextEpisodeBtn.classList.add('show-next-episode-btn')
-        if(this.isLastAvailableEpisode(episodeId))
+        if (this.isLastAvailableEpisode(episodeId))
             this.nextEpisodeBtn.classList.remove('show-next-episode-btn')
 
-        if(customTitle !== undefined) animeTitles.unshift(customTitle)
+        if (customTitle !== undefined) animeTitles.unshift(customTitle)
 
         let i = 0
         do {
             var videoSource = await cons.getEpisodeUrl(animeTitles[i], episodeId, this.store.get('dubbed'))
             i++
-        } while(videoSource === -1 && i < animeTitles.length)
+        } while (videoSource === -1 && i < animeTitles.length)
 
         this.putSource(videoSource.url, videoSource.isM3U8)
         this.videoElement.play()
@@ -223,7 +231,46 @@ module.exports = class Video {
         this.pauseInfoEpisodeTitle.innerHTML = episodeTitle
         this.pauseInfoEpisodeDescription.innerHTML = episodeDescription
     }
-    
+
+
+    /**
+   * While watching, plays the selected episode from the list
+   * 
+   * @returns if you are watching the last episode
+   */
+    async playThisEpisode(animeId, episodeId) {
+        const cons = this.getSourceFlagObject()
+        const episodeTitle = document.querySelector(`#anime-page-${animeId} .episode-entry#episode-${animeId}-${episodeId} .title`).innerHTML
+        const episodeDescription = document.querySelector(`#anime-page-${animeId} .episode-entry#episode-${animeId}-${episodeId} .description`).innerHTML
+        let animeTitles = this.getParsedAnimeTitles()
+        const customTitle = animeCustomTitles[this.store.get('source_flag')][animeId]
+
+        // "update list when user goes to next ep" store current animeID and episodeId for listing currently playing anime episodes and highlight currently playing
+        localStorage.setItem("seasonInfo", JSON.stringify({ animeId, episodeId }));
+
+        this.videoElement.src = null
+        this.nextEpisodeBtn.classList.add('show-next-episode-btn')
+        if (this.isLastAvailableEpisode(episodeId))
+            this.nextEpisodeBtn.classList.remove('show-next-episode-btn')
+
+        if (customTitle !== undefined) animeTitles.unshift(customTitle)
+
+        let i = 0
+        do {
+            var videoSource = await cons.getEpisodeUrl(animeTitles[i], episodeId, this.store.get('dubbed'))
+            i++
+        } while (videoSource === -1 && i < animeTitles.length)
+
+        this.putSource(videoSource.url, videoSource.isM3U8)
+        this.videoElement.play()
+        this.videoEpisode.innerHTML = episodeId
+        this.videoEpisodeTitle.innerHTML = document.querySelector(`.episode-entry#episode-${animeId}-${this.videoEpisode.innerHTML} .title`).innerHTML
+
+        this.pauseInfoEpisodeTitle.innerHTML = episodeTitle
+        this.pauseInfoEpisodeDescription.innerHTML = episodeDescription
+    }
+
+
     /**
      * Returns if you can update the episodes progress or not
      * 
@@ -268,10 +315,10 @@ module.exports = class Video {
         let pers_data_common = document.getElementById('persistent-data-common')
 
         // refresh persistent data
-        if(userProgress) pers_data.querySelector('.persdata-anime-user-progress').innerHTML = userProgress
-        if(userList) pers_data.querySelector('.persdata-anime-user-status').innerHTML = userList
-        if(userScore) pers_data.querySelector('.persdata-anime-user-score').innerHTML = userScore
-        
+        if (userProgress) pers_data.querySelector('.persdata-anime-user-progress').innerHTML = userProgress
+        if (userList) pers_data.querySelector('.persdata-anime-user-status').innerHTML = userList
+        if (userScore) pers_data.querySelector('.persdata-anime-user-score').innerHTML = userScore
+
         pers_data_common.innerHTML = pers_data.innerHTML
 
         // watch buttons
@@ -284,20 +331,20 @@ module.exports = class Video {
         console.log('episodes', episodes)
         console.log('available', availableEpisodes)
         console.log('userProgress', userProgress)
-        
-        if(userProgress == 0) {
+
+        if (userProgress == 0) {
             watch_buttons_1.innerHTML = `<i style="margin-right: 7px" class="fa-solid fa-play"></i>`
             watch_buttons_1.innerHTML += `Start watching`
             watch_buttons_1.id = `watch-${animeId}-${1}`
             watch_buttons_1.classList.remove('disabled')
             watch_buttons_1.removeAttribute('disabled')
-        } else if(userProgress == episodes) {
+        } else if (userProgress == episodes) {
             watch_buttons_1.innerHTML = `<i style="margin-right: 7px" class="fa-solid fa-rotate"></i>`
             watch_buttons_1.innerHTML += `Watch again`
             watch_buttons_1.id = `watch-${animeId}-${1}`
             watch_buttons_1.classList.remove('disabled')
             watch_buttons_1.removeAttribute('disabled')
-        } else if(userProgress == availableEpisodes) {
+        } else if (userProgress == availableEpisodes) {
             watch_buttons_1.innerHTML = `<i style="margin-right: 7px" class="fa-solid fa-hourglass"></i>`
             watch_buttons_1.innerHTML += timeUntilAiring
             watch_buttons_1.classList.add('disabled')
@@ -316,7 +363,7 @@ module.exports = class Video {
         watch_buttons_2.innerHTML = `<i class="fa-solid fa-check"></i>`
 
         // anime sections
-        switch(pers_data.querySelector('.persdata-anime-user-status').innerHTML) {
+        switch (pers_data.querySelector('.persdata-anime-user-status').innerHTML) {
             case 'CURRENT':
                 var entryId = 'current-home'
                 break
@@ -339,7 +386,7 @@ module.exports = class Video {
 
         let anime_section_div = document.querySelector(`#${entryId}`)
         let anime_entry_div = document.querySelector(`#anime-entry-${animeId}`)
-        if(anime_entry_div)
+        if (anime_entry_div)
             anime_section_div.prepend(anime_entry_div)
     }
 
@@ -349,10 +396,10 @@ module.exports = class Video {
      * @param {*} videoSource 
      */
     putSource(url, isM3U8) {
-        if(isM3U8) {
+        if (isM3U8) {
             var hls = new Hls()
-        
-            if(Hls.isSupported()) {
+
+            if (Hls.isSupported()) {
                 hls.loadSource(url)
                 hls.attachMedia(this.videoElement)
             } else if (this.videoElement.canPlayType('application/vnd.apple.mpegurl')) {
