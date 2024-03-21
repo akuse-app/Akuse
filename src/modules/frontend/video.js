@@ -38,6 +38,7 @@ module.exports = class Video {
         // dynamic settings options
         this.dynamicSettingsLanguage = document.getElementById('dynamic-settings-language')
         this.dynamicSettingsDubbed = document.getElementById('dynamic-settings-dubbed')
+        this.dynamicSettingsAutoNext = document.getElementById('dynamic-settings-auto-next')
         this.dynamicSettingsUpdateProgress = document.getElementById('dynamic-settings-update-progress')
     }
 
@@ -97,6 +98,10 @@ module.exports = class Video {
         this.store.get('dubbed') == true
             ? this.dynamicSettingsDubbed.checked = true
             : this.dynamicSettingsDubbed.checked = false
+
+        this.store.get('auto-next') == true
+            ? this.dynamicSettingsAutoNext.checked = true
+            : this.dynamicSettingsAutoNext.checked = false
 
         this.store.get('update_progress')
             ? this.dynamicSettingsUpdateProgress.checked = true

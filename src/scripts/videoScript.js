@@ -21,6 +21,7 @@ skipForwardSmallText = container.querySelector(".skip-forward-small span"),
 playPauseBtn = container.querySelector(".play-pause i"),
 nextEpisodeBtn = container.querySelector(".next"),
 exitBtn = container.querySelector('.exit-video'),
+pictureInPicture = container.querySelector('.pic-in-pic'),
 volumeBtn = container.querySelector(".volume i"),
 settingsBtn = container.querySelector(".settings i"),
 settingsOptions = container.querySelector(".settings-options"),
@@ -32,6 +33,7 @@ fullScreenBtn = container.querySelector(".fullscreen i"),
 dynamicSettingsUpdateProgress = document.getElementById('dynamic-settings-update-progress'),
 dynamicSettingsUpdateProgressSlider = document.getElementById('dynamic-settings-update-progress-slider'),
 dynamicSettingsDubbed = document.getElementById('dynamic-settings-dubbed'),
+dynamicSettingsAutoNext = document.getElementById('dynamic-settings-auto-next'),
 dynamicSettingsLanguage = document.getElementById('dynamic-settings-language'),
 // settings options
 updateProgressCheckbox = document.getElementById('update-progress-checkbox'),
@@ -73,7 +75,7 @@ getVolume()
     ? setVolume(parseFloat(store.get('video_volume')))
     : setVolume(0.5)
 
-if(getVolume() == 0) {
+if (getVolume() == 0) {
     volumeBtn.classList.replace("fa-volume-high", "fa-volume-xmark")
 }
 
@@ -83,11 +85,11 @@ getPlayback()
 
 getIntroSkipTime()
     ? setIntroSkipTime(store.get('intro_skip_time'))
-    : setIntroSkipTime(85) 
+    : setIntroSkipTime(85)
 
 // controls
 const hideControls = () => {
-    if(settingsOptions.classList.contains("show-options")) 
+    if (settingsOptions.classList.contains("show-options"))
         return
 
     timer = setTimeout(() => {
@@ -106,7 +108,7 @@ const reloadVideoAtPreviousTime = () => {
     video.displayVideo(`episode-${animeId}-${n}`, mainVideo.currentTime)
 }
 
-if(!store.get('logged')) {
+if (!store.get('logged')) {
     dynamicSettingsUpdateProgress.setAttribute('disabled', '')
     dynamicSettingsUpdateProgressSlider.classList.add('disabled')
 }
@@ -128,9 +130,15 @@ dynamicSettingsDubbed.addEventListener('change', () => {
     dubbedCheckbox.checked = dynamicSettingsDubbed.checked
 })
 
+dynamicSettingsAutoNext.addEventListener('change', () => {
+    dynamicSettingsAutoNext.checked == true
+        ? store.set('auto-next', true)
+        : store.set('auto-next', false)
+})
+
 dynamicSettingsLanguage.addEventListener('change', () => {
     store.set('source_flag', dynamicSettingsLanguage.value)
-    
+
     reloadVideoAtPreviousTime()
 
     languageSelect.value = dynamicSettingsLanguage.value
@@ -141,11 +149,11 @@ var pauseTimer
 const showPauseInfo = () => {
     clearTimeout(pauseTimer)
 
-    if(settingsOptions.classList.contains("show-options")) 
+    if (settingsOptions.classList.contains("show-options"))
         return
-    
+
     pauseTimer = setTimeout(() => {
-        if(mainVideo.paused && mainVideo.currentTime != 0) {
+        if (mainVideo.paused && mainVideo.currentTime != 0) {
             container.classList.add('show-pause-info')
         }
     }, 7500)
@@ -174,13 +182,17 @@ container.addEventListener("mousemove", () => {
 })
 
 const formatTime = time => {
+    if (!time || time === NaN) {
+        return '00:00';
+    }
+
     let seconds = Math.floor(time % 60),
-    minutes = Math.floor(time / 60) % 60,
-    hours = Math.floor(time / 3600)
+        minutes = Math.floor(time / 60) % 60,
+        hours = Math.floor(time / 3600)
     seconds = seconds < 10 ? `0${seconds}` : seconds
     minutes = minutes < 10 ? `0${minutes}` : minutes
     hours = hours < 10 ? `0${hours}` : hours
-    if(hours == 0) {
+    if (hours == 0) {
         return `${minutes}:${seconds}`
     }
     return `${hours}:${minutes}:${seconds}`
@@ -204,7 +216,7 @@ videoTimeline.addEventListener("click", e => {
 })
 
 mainVideo.addEventListener("timeupdate", e => {
-    let {currentTime, duration} = e.target
+    let { currentTime, duration } = e.target
     progressBar.style.width = `${(currentTime / duration) * 100}%`
     currentVidTime.innerText = formatTime(currentTime)
 })
@@ -212,6 +224,23 @@ mainVideo.addEventListener("timeupdate", e => {
 mainVideo.addEventListener("timeupdate", () => {
     videoDuration.innerText = formatTime(mainVideo.duration - mainVideo.currentTime)
 })
+
+mainVideo.addEventListener("ended", async () => {
+    if (store.get('auto-next') == true) {
+        await video.nextEpisode()
+        updated = false
+    }
+})
+
+
+const togglePictureInPicture = () => {
+    if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+    } else if (document.pictureInPictureEnabled) {
+        mainVideo.requestPictureInPicture();
+    }
+}
+
 
 const draggableProgressBar = e => {
     let timelineWidth = videoTimeline.clientWidth
@@ -223,7 +252,7 @@ const draggableProgressBar = e => {
 volumeRange.addEventListener("input", e => {
     setVolume(e.target.value)
 
-    if(e.target.value == 0) {
+    if (e.target.value == 0) {
         return volumeBtn.classList.replace("fa-volume-high", "fa-volume-xmark")
     }
     volumeBtn.classList.replace("fa-volume-xmark", "fa-volume-high")
@@ -241,6 +270,10 @@ fullScreenBtn.addEventListener("click", () => {
     toggleFullScreen()
 })
 
+pictureInPicture.addEventListener("click", () => {
+    togglePictureInPicture()
+})
+
 exitBtn.addEventListener("click", () => {
     updated = false
     mainVideo.pause()
@@ -250,7 +283,7 @@ exitBtn.addEventListener("click", () => {
     videoTitle.innerHTML = ''
     videoEpisodeTitle.innerHTML = ''
     container.style.display = 'none'
-    if(document.fullscreenEnabled) {
+    if (document.fullscreenEnabled) {
         document.exitFullscreen()
         fullScreenBtn.classList.replace("fa-compress", "fa-expand")
     }
@@ -276,17 +309,17 @@ container.addEventListener("click", (event) => {
 
 // fullscreen when double click
 mainVideo.addEventListener('dblclick', (event) => {
-    if(event.target !== event.currentTarget) return;
+    if (event.target !== event.currentTarget) return;
     toggleFullScreen()
 })
 
 shadowControls.addEventListener("click", (event) => {
-    if(event.target !== event.currentTarget) return;
+    if (event.target !== event.currentTarget) return;
     mainVideo.paused ? mainVideo.play() : mainVideo.pause()
 })
 
 shadowControls.addEventListener('dblclick', (event) => {
-    if(event.target !== event.currentTarget) return;
+    if (event.target !== event.currentTarget) return;
     toggleFullScreen()
 })
 
@@ -310,23 +343,23 @@ settingsBtn.addEventListener("click", () => {
 
 /* trigger auto updating episode when the user reaches the 80% of the anime */
 mainVideo.addEventListener('timeupdate', () => {
-    if(canUpdate) console.log(mainVideo.currentTime * 100 / mainVideo.duration)
-    if(mainVideo.currentTime * 100 / mainVideo.duration > 80
-       && !updated && canUpdate) {
+    if (canUpdate) console.log(mainVideo.currentTime * 100 / mainVideo.duration)
+    if (mainVideo.currentTime * 100 / mainVideo.duration > 80
+        && !updated && canUpdate) {
         updated = true
         video.updateAnimeProgress()
     }
 })
 
 document.addEventListener("keydown", async (event) => {
-    if (event.isComposing || event.keyCode === 229) 
+    if (event.isComposing || event.keyCode === 229)
         return
-    
-    if(videoIsDisplayed()) {
-        switch(event.code) {
+
+    if (videoIsDisplayed()) {
+        switch (event.code) {
             case 'Space': {
                 event.preventDefault();
-                
+
                 mainVideo.paused ? mainVideo.play() : mainVideo.pause()
                 hidePauseInfo()
                 break
@@ -362,7 +395,7 @@ document.addEventListener("keydown", async (event) => {
                 break
             }
         }
-        switch(event.key) {
+        switch (event.key) {
             case 'f': {
                 event.preventDefault();
 
@@ -387,26 +420,26 @@ document.addEventListener("keydown", async (event) => {
 })
 
 function videoIsDisplayed() {
-    if(container.style.display == 'block')
+    if (container.style.display == 'block')
         return true
 
     return false
 }
 
 function toggleFullScreen() {
-    if(document.fullscreenElement) {
+    if (document.fullscreenElement) {
         fullScreenBtn.classList.replace("fa-compress", "fa-expand")
-        
+
         return document.exitFullscreen()
     }
-    
+
     container.classList.toggle("fullscreen")
     fullScreenBtn.classList.replace("fa-expand", "fa-compress")
     container.requestFullscreen()
 }
 
 function toggleMute() {
-    if(mainVideo.volume == 0 && videoIsDisplayed) {
+    if (mainVideo.volume == 0 && videoIsDisplayed) {
         // mainVideo.volume = volumeBtn.dataset.volume;
         // volumeRange.value = volumeBtn.dataset.volume;
         setVolume(volumeBtn.dataset.volume)
@@ -419,5 +452,5 @@ function toggleMute() {
         setVolume(0)
         return volumeBtn.classList.replace("fa-volume-high", "fa-volume-xmark")
     }
-    
+
 }
