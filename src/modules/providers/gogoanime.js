@@ -29,7 +29,7 @@ module.exports = class Gogoanime {
 
         // Get animeId
         let animeId = await this.getAnimeId(searchQuery);
-        if (animeId == -1) {
+        if (animeId == -1 && dubbed) {
             console.log(`Could not get dub for: ${searchQuery}`);
             animeId = await this.getAnimeId(animeSearch);
         };
@@ -37,7 +37,18 @@ module.exports = class Gogoanime {
         if (animeId == -1) return -1;
 
         // Get animeEpisodeId
-        const animeEpisodeId = await this.getAnimeEpisodeId(animeId, episode);
+        let animeEpisodeId
+
+        //prob most simple fix it idk
+        if (animeSearch == "Ore dake Level Up na Ken" && !dubbed && episode >= 8) {
+            animeEpisodeId = await this.getAnimeEpisodeId(animeId, Number(episode) + 1)
+
+        }
+        else {
+            animeEpisodeId = await this.getAnimeEpisodeId(animeId, episode);
+        }
+
+        //const animeEpisodeId = await this.getAnimeEpisodeId(animeId, episode);
         if (animeEpisodeId === undefined) return -1;
 
         // Fetch episode sources

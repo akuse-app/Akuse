@@ -26,7 +26,7 @@ module.exports = class AnimeSaturn {
      */
     async getEpisodeUrl(animeSearch, episode, dubbed) {
         let animeId = await this.getAnimeId(dubbed ? `${animeSearch} (ITA)` : animeSearch)
-        if (animeId == -1) {
+        if (animeId == -1 && dubbed) {
             console.log(`Could not get animeId for DUB: ${animeSearch}`);
             animeId = await this.getAnimeId(animeSearch);
         }
