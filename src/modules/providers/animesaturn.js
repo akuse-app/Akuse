@@ -25,11 +25,16 @@ module.exports = class AnimeSaturn {
      * @returns -1 if could not get the animeId or the animeEpisodeId
      */
     async getEpisodeUrl(animeSearch, episode, dubbed) {
-        const animeId = await this.getAnimeId(dubbed ? `${animeSearch} (ITA)` : animeSearch)
+        let animeId = await this.getAnimeId(dubbed ? `${animeSearch} (ITA)` : animeSearch)
+        if (animeId == -1 && dubbed) {
+            console.log(`Could not get animeId for DUB: ${animeSearch}`);
+            animeId = await this.getAnimeId(animeSearch);
+        }
+
         if (animeId == -1) return -1
 
         const animeEpisodeId = await this.getAnimeEpisodeId(animeId, episode)
-        if(animeEpisodeId === undefined) return -1
+        if (animeEpisodeId === undefined) return -1
 
         const data = await this.consumet.fetchEpisodeSources(animeEpisodeId)
 
@@ -45,7 +50,7 @@ module.exports = class AnimeSaturn {
      */
     async getAnimeId(animeSearch) {
         const data = await this.consumet.search(animeSearch)
-        
+
         if (data.results.length !== 0) {
             return data.results[0].id
         } else {
@@ -62,6 +67,6 @@ module.exports = class AnimeSaturn {
      */
     async getAnimeEpisodeId(animeId, episode) {
         const data = await this.consumet.fetchAnimeInfo(animeId)
-        return data.episodes[episode-1]?.id
+        return data.episodes[episode - 1]?.id
     }
 }
