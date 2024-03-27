@@ -39,7 +39,7 @@ module.exports = class Gogoanime {
         // Get animeEpisodeId
         let animeEpisodeId
 
-        //prob most simple fix it idk
+        //prob most simple fix idk
         if (animeSearch == "Ore dake Level Up na Ken" && !dubbed && episode >= 8) {
             animeEpisodeId = await this.getAnimeEpisodeId(animeId, Number(episode) + 1)
 
