@@ -1,389 +1,455 @@
 :root {
-    --color-transparency: #ffffff6c;
+  --color-transparency: #ffffff6c;
 }
 
 #video {
-    height: 100%;
-    width: 100%;
-    z-index: 890;
-    cursor: none;
+  height: 100%;
+  width: 100%;
+  z-index: 890;
+  cursor: none;
 }
 
-.container, .video-controls, .video-timer, .options {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.container,
+.video-controls,
+.video-timer,
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .container {
-    display: none; /* turning block */
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    user-select: none;
-    overflow: hidden;
-    border-radius: 5px;
-    background: #000;
-    aspect-ratio: 16 / 9;   
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 900;
-    transition: 0.3s;
+  display: none; /* turning block */
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  user-select: none;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #000;
+  aspect-ratio: 16 / 9;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 900;
+  transition: 0.3s;
 }
 
 .container.fullscreen {
-    max-width: 100%;
-    width: 100%;
-    height: 100vh;
-    border-radius: 0px;
+  max-width: 100%;
+  width: 100%;
+  height: 100vh;
+  border-radius: 0px;
 }
 
 .container button {
-    color: var(--font-2);
-    background-color: transparent;
-    border: none;
-    outline: none;
-    font-size: 2rem;
-    transition: 0.1s ease-out;
+  color: var(--font-2);
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 2rem;
+  transition: 0.1s ease-out;
 }
 
 .container button i {
-    cursor: pointer;
-    transition: 0.1s ease-out;
+  cursor: pointer;
+  transition: 0.1s ease-out;
 }
 
 .container button i:hover {
-    color: var(--font-1);
-    transform: scale(1.1);
+  color: var(--font-1);
+  transform: scale(1.1);
 }
 
 .container button i:active {
-    transform: scale(1);
+  transform: scale(1);
 }
 
 .container .next {
-    display: none;
+  display: none;
 }
 
 .container .next.show-next-episode-btn {
-    display: block;
+  display: block;
 }
 
 .video-timeline {
-    display: flex;
-    align-items: center;
-    height: 20px;
-    width: 100%;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  width: 100%;
+  cursor: pointer;
 }
 
-.video-timer .separator{
-    margin: 0;
+.video-timer .separator {
+  margin: 0;
 }
 
-.video-timeline .progress-area{
-    width: 100%;
-    height: 3px;
-    position: relative;
-    background: var(--color-transparency);
-    border-radius: var(--border-radius);
-    /* transition: 0.1s; */
+.video-timeline .progress-area {
+  width: 100%;
+  height: 3px;
+  position: relative;
+  background: var(--color-transparency);
+  border-radius: var(--border-radius);
+  /* transition: 0.1s; */
 }
 
 .video-timeline:hover .progress-area {
-    height: 7px;
+  height: 7px;
 }
 
-.progress-area span{
-    position: absolute;
-    left: 50%;
-    top: -25px;
-    font-size: 13px;
-    color: #fff;
-    pointer-events: none;
-    transform: translateX(-50%);
+.progress-area span {
+  position: absolute;
+  left: 50%;
+  top: -25px;
+  font-size: 13px;
+  color: #fff;
+  pointer-events: none;
+  transform: translateX(-50%);
 }
 
-.progress-area .video-progress-bar{
-    width: 0%;
-    height: 100%;
-    position: relative;
-    margin: 0;
-    background: var(--color-important);
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
+.progress-area .video-progress-bar {
+  width: 0%;
+  height: 100%;
+  position: relative;
+  margin: 0;
+  background: var(--color-important);
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
 }
 
-.video-progress-bar::before{
-    content: "";
-    right: -10px;
-    top: 50%;
-    width: 15px;
-    height: 15px;
-    position: absolute;
-    border-radius: 50%;
-    background: var(--color-important);
-    transform: translateY(-50%);
+.video-progress-bar::before {
+  content: "";
+  right: -10px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-important);
+  transform: translateY(-50%);
 }
 
-.video-progress-bar::before, .progress-area span{
-    display: none;
+.video-progress-bar::before,
+.progress-area span {
+  display: none;
 }
 
 .video-timeline:hover .video-progress-bar::before,
-.video-timeline:hover .progress-area span{
-    display: block;
+.video-timeline:hover .progress-area span {
+  display: block;
 }
 
 .shadow-controls {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    opacity: 0;
-    background-color: rgba(0, 0, 0, 0.4);
-    /* box-shadow: inset 0px 300px 400px -100px #000000; */
-    transition: 0.3s;
-    cursor: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  /* box-shadow: inset 0px 300px 400px -100px #000000; */
+  transition: 0.3s;
+  cursor: none;
 }
 
 .shadow-controls.show-cursor {
-    cursor: auto;
+  cursor: auto;
 }
 
 .pause-info {
-    display: none;
+  display: none;
 }
 
 .pause-info .content {
-    margin: 0 200px;
-    width: calc(100% - 400px);
+  margin: 0 200px;
+  width: calc(100% - 400px);
 }
 
 .pause-info .you-are-watching {
-    color: var(--font-2);
-    font-size: 1.4rem;
-    font-weight: 400;
+  color: var(--font-2);
+  font-size: 1.4rem;
+  font-weight: 400;
 }
 
 .pause-info #pause-info-anime-title {
-    color: var(--font-1);
-    font-size: 3.4rem;
-    font-weight: 500;
-    margin-bottom: 20px;
+  color: var(--font-1);
+  font-size: 3.4rem;
+  font-weight: 500;
+  margin-bottom: 20px;
 }
 
 .pause-info #pause-info-episode-title {
-    color: var(--font-1);
-    font-size: 1.8rem;
-    font-weight: 500;
-    margin-bottom: 10px;
+  color: var(--font-1);
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 10px;
 }
 
 .pause-info #pause-info-episode-description {
-    color: var(--font-2);
-    font-weight: 400;
-    font-size: 1.2rem;
+  color: var(--font-2);
+  font-weight: 400;
+  font-size: 1.2rem;
 }
 
 .container.show-pause-info .pause-info {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-dark-opacity);
-    z-index: 896;
-    transition: 0.3s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-dark-opacity);
+  z-index: 896;
+  transition: 0.3s;
 }
 
 .container.show-controls .up-controls {
-    z-index: 896;
-    opacity: 1;
-    transition: 0.3s;
+  z-index: 896;
+  opacity: 1;
+  transition: 0.3s;
 }
 .container.show-controls .mid-controls,
 .container.show-controls .bottom-controls,
 .container.show-controls .shadow-controls {
-    z-index: 895;
-    opacity: 1;
-    transition: 0.3s;
+  z-index: 895;
+  opacity: 1;
+  transition: 0.3s;
 }
 
 .up-controls,
 .mid-controls,
 .bottom-controls {
-    width: calc(100% - 80px);
-    opacity: 0;
-    display: flex;
-    position: absolute;
-    margin: 40px;
-    color: white;
+  width: calc(100% - 80px);
+  opacity: 0;
+  display: flex;
+  position: absolute;
+  margin: 40px;
+  color: white;
 }
 
 .up-controls {
-    top: 0;
-    justify-content: center;
+  top: 0;
+  justify-content: center;
 }
 
 .mid-controls {
-    top: 40%;
-    justify-content: center;
-    align-items: center;
-    gap: 120px;
+  top: 40%;
+  justify-content: center;
+  align-items: center;
+  gap: 120px;
 }
 
 .bottom-controls {
-    align-items: center;
-    flex-direction: row;
-    gap: 20px;
-    bottom: 0;
+  align-items: center;
+  flex-direction: row;
+  gap: 20px;
+  bottom: 0;
 }
 
 .up-controls .left {
-    position: absolute;
-    left: 0;
-    margin-top: 10px;
-    display: flex;
-    gap: 20px;
-    align-items: center;
+  position: absolute;
+  left: 0;
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
 }
 
 .up-controls .center {
-    margin: auto;
+  margin: auto;
 }
 
 .up-controls .right {
-    position: absolute;
-    right: 0;
-    margin-top: 10px;
-    display: flex;
-    gap: 30px;
-    align-items: center;
+  position: absolute;
+  right: 0;
+  margin-top: 10px;
+  display: flex;
+  gap: 30px;
+  align-items: center;
 }
 
 .up-controls .info {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
 }
 
 .up-controls .info:hover {
-    filter: brightness(0.80);
+  filter: brightness(0.8);
 }
 
 .up-controls .info:active {
-    filter: brightness(0.70);
+  filter: brightness(0.7);
 }
 
 .up-controls .info .title {
-    color: var(--font-2);
-    /* color: var(--color-transparency); */
-    font-weight: var(--font-weight);
-    font-size: 1.4rem;
+  color: var(--font-2);
+  /* color: var(--color-transparency); */
+  font-weight: var(--font-weight);
+  font-size: 1.4rem;
 }
 
 .up-controls .info .back,
 .up-controls .info .episode {
-    color: var(--font-1);
-    font-weight: var(--font-weight);
-    font-size: 2.2rem;
+  color: var(--font-1);
+  font-weight: var(--font-weight);
+  font-size: 2.2rem;
 }
 
 .up-controls .info .episode {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
+.up-controls .episode-content .ep_list_text .ep_list_content {
+  height: 400px;
+  overflow-y: scroll;
+}
+
+.up-controls .episode-content .ep_list_text,
 .up-controls .settings-content .settings-options {
-    display: none;
-    opacity: 0;
-    width: 400px;
-    /* height: 250px; */
-    position: absolute;
-    top: 60px;
-    right: 0;
+  display: none;
+  opacity: 0;
+  width: 400px;
+  position: absolute;
+  top: 60px;
+  right: 0;
 }
 
-.up-controls .settings-content .settings-options input[type = 'range'] {
-    accent-color: var(--font-1);
+.up-controls .settings-content .settings-options input[type="range"] {
+  accent-color: var(--font-1);
+}
+
+.up-controls .episode-content .ep_list_text ol {
+  font-size: 1.2rem;
+  padding: 15px;
+}
+
+.up-controls .episode-content .ep_list_text ol li p {
+  font: 14px Open Sans, sans-serif;
+  line-height: 20px;
+  color: #a5a5a5;
+  margin-top: 0px;
+}
+
+.up-controls .episode-content .ep_list_text ol {
+    counter-reset: item;
+    list-style-type: none;
+  }
+
+.up-controls .episode-content .ep_list_text ol li {
+  font: 18px Open Sans, sans-serif;
+  line-height: 32px;
+  margin-bottom: 5px;
+  padding: 5px;
+  color: #fff;
+  position: relative;
+  cursor: pointer;
+}
+
+.up-controls .episode-content .ep_list_text ol li.active {
+  color: rgb(142, 142, 243);
+  background-color: #3636369a;
+  border: 1px solid rgba(224, 255, 255, 0.493);
+  border-radius: 5px;
+}
+
+.up-controls .episode-content .ep_list_text ol li.active:hover{
+  color: rgb(142, 142, 243) !important;
+}
+
+.up-controls .episode-content .ep_list_text ol li:before {
+  content: counter(item) ". ";
+  counter-increment: item;
 }
 
 .up-controls .settings-content .settings-options li {
-    /* width: calc(100% - 30px); */
-    display: flex;
-    align-items: center;
-    font-size: 1.2rem;
-    padding: 15px;
-    color: var(--font-2);
+  /* width: calc(100% - 30px); */
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  padding: 15px;
+  color: var(--font-2);
 }
 
+.up-controls .episode-content .ep_list_text li i,
 .up-controls .settings-content .settings-options li i {
-    width: 30px;
+  width: 30px;
 }
 
-.up-controls .settings-content .settings-options li input ,
+.up-controls .settings-content .settings-options li input,
 .up-controls .settings-content .settings-options li select,
 .up-controls .settings-content .settings-options li label {
-    position: absolute;
-    right: 15px;
+  position: absolute;
+  right: 15px;
 }
 
 .up-controls .settings-content .settings-options li select {
-    background-color: var(--color-2);
+  background-color: var(--color-2);
 }
 
+.up-controls .episode-content .ep_list_text ol li:hover,
 .up-controls .settings-content .settings-options li:hover {
-    color: var(--font-1);
-    background-color: var(--color-4);
+  color: var(--font-1);
+  background-color: var(--color-4);
 }
 
 .up-controls .settings-content .settings-options.show-options {
-    display: block;
-    opacity: 0.85;
-    list-style: none;
-    overflow: hidden;
-    border-radius: var(--border-radius);
-    pointer-events: none;
-    background-color: var(--color-2);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    transition: opacity 0.13s ease;
-    pointer-events: auto;
+  display: block;
+  opacity: 0.85;
+  list-style: none;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  pointer-events: none;
+  background-color: var(--color-2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.13s ease;
+  pointer-events: auto;
+}
+
+.up-controls .episode-content .ep_list_text.ep_list_list {
+  display: block;
+  opacity: 0.85;
+  list-style: none;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  pointer-events: none;
+  background-color: var(--color-2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.13s ease;
+  pointer-events: auto;
 }
 
 .mid-controls .play-pause-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 72px;
 }
 
 .skip-forward-small {
-    width: 36px;
+  width: 36px;
 }
 
 .mid-controls button {
-    color: var(--color-transparency);
-    font-size: 4.6rem;
+  color: var(--color-transparency);
+  font-size: 4.6rem;
 }
 
 .mid-controls .skip-forward-small {
-    font-size: 2.3rem;
+  font-size: 2.3rem;
 }
 
 .mid-controls .skip-forward-small span {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
-
 .mid-controls button i:hover {
-    color: var(--font-1);
+  color: var(--font-1);
 }
 
 .bottom-controls .current-time,
 .bottom-controls .video-duration {
-    color: var(--font-1);
-    font-size: 1.4rem;
-    font-family: sans-serif;
+  color: var(--font-1);
+  font-size: 1.4rem;
+  font-family: sans-serif;
 }
