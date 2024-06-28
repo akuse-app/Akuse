@@ -8,6 +8,7 @@ import {
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast, { Toaster } from 'react-hot-toast';
 import Skeleton from 'react-loading-skeleton';
 
@@ -34,6 +35,7 @@ interface SlideProps {
 }
 
 const Slide: React.FC<SlideProps> = ({ listAnimeData, index, isVisible }) => {
+  const { t } = useTranslation();
   const style = getComputedStyle(document.body);
 
   const [playerIVideo, setPlayerIVideo] = useState<IVideo | null>(null);
@@ -77,7 +79,7 @@ const Slide: React.FC<SlideProps> = ({ listAnimeData, index, isVisible }) => {
     await fetchEpisodesInfo();
     getUniversalEpisodeUrl(listAnimeData, 1).then((data) => {
       if (!data) {
-        toast(`Source not found.`, {
+        toast(t('sourceNotFound'), {
           style: {
             color: style.getPropertyValue('--font-2'),
             backgroundColor: style.getPropertyValue('--color-3'),
@@ -124,7 +126,6 @@ const Slide: React.FC<SlideProps> = ({ listAnimeData, index, isVisible }) => {
       <div className="slide">
         <div
           className={`shadow-overlay ${shadowAnimationClasses}`}
-          // style={{ display: isVisible ? 'block' : 'none' }}
         >
           <div className={`content show`}>
             <div className="anime-info">
@@ -135,7 +136,7 @@ const Slide: React.FC<SlideProps> = ({ listAnimeData, index, isVisible }) => {
               </div>
               •
               <div className="anime-episodes">
-                {getAvailableEpisodes(listAnimeData.media)} Episodes
+                {getAvailableEpisodes(listAnimeData.media)} {t('episodes')}
               </div>
             </div>
             <div className="anime-title">{getTitle(listAnimeData.media)}</div>
@@ -149,14 +150,14 @@ const Slide: React.FC<SlideProps> = ({ listAnimeData, index, isVisible }) => {
             ></div>
             <div className="buttons">
               <ButtonMain
-                text="Watch now"
+                text={t('watchNow')}
                 icon={faPlay}
                 tint="primary"
                 shadow
                 onClick={handlePressButton}
               />
               <ButtonMain
-                text="More info"
+                text={t('moreInfo')}
                 icon={faArrowUpRightFromSquare}
                 tint="light"
                 shadow
@@ -186,6 +187,7 @@ interface SlideshowProps {
 
 const Slideshow: React.FC<SlideshowProps> = ({ listAnimeData }) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const { t } = useTranslation();
 
   const [animeData, setAnimeData] = useState<ListAnimeData[] | undefined>();
 
@@ -224,7 +226,6 @@ const Slideshow: React.FC<SlideshowProps> = ({ listAnimeData }) => {
 
   return (
     <>
-      {/* <h1>Discover</h1> */}
       {listAnimeData ? (
         <div className="slideshow-container">
           <div

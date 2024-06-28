@@ -2,6 +2,7 @@ import './styles/AnimeSection.css';
 
 import { faArrowLeftLong, faArrowRightLong } from '@fortawesome/free-solid-svg-icons';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ListAnimeData } from '../../types/anilistAPITypes';
 import AnimeEntry from './AnimeEntry';
@@ -13,6 +14,7 @@ interface AnimeSectionProps {
 }
 
 const AnimeSection: React.FC<AnimeSectionProps> = ({ title, animeData }) => {
+  const { t } = useTranslation();
   const animeListWrapperRef = useRef<HTMLDivElement>(null);
   const animeListRef = useRef<HTMLDivElement>(null);
   const [enableButtons, setEnableButtons] = useState<boolean>(false);
@@ -50,7 +52,7 @@ const AnimeSection: React.FC<AnimeSectionProps> = ({ title, animeData }) => {
 
   return (
     <section onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <h1>{title}</h1>
+      <h1>{t(title)}</h1>
       {enableButtons && (
         <div
           className={`scrollers ${

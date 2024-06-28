@@ -1,24 +1,22 @@
 import Store from 'electron-store';
-import { ContentSteeringController } from 'hls.js';
-import React, { ChangeEvent, useContext, useState } from 'react';
+import React, { ChangeEvent, useContext, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../App';
 import Heading from '../components/Heading';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const STORE = new Store();
 
-// Interfaccia per definire la struttura delle opzioni del select
 interface Option {
   value: string;
   label: string;
 }
 
-// Props per il componente Element
 interface ElementProps {
   label: string;
   children: React.ReactNode;
 }
 
-// Componente generico per gli elementi
 const Element: React.FC<ElementProps> = ({ label, children }) => {
   return (
     <div className="element">
@@ -30,14 +28,12 @@ const Element: React.FC<ElementProps> = ({ label, children }) => {
   );
 };
 
-// Props per il componente CheckboxElement
 interface CheckboxElementProps {
   label: string;
   checked: boolean;
   onChange: () => void;
 }
 
-// Componente per gestire gli elementi con i checkbox
 const CheckboxElement: React.FC<CheckboxElementProps> = ({
   label,
   checked,
@@ -53,7 +49,6 @@ const CheckboxElement: React.FC<CheckboxElementProps> = ({
   );
 };
 
-// Props per il componente SelectElement
 interface SelectElementProps {
   label: string;
   value: number | string;
@@ -61,7 +56,6 @@ interface SelectElementProps {
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
 }
 
-// Componente per gestire gli elementi con i select
 const SelectElement: React.FC<SelectElementProps> = ({
   label,
   value,
@@ -82,23 +76,25 @@ const SelectElement: React.FC<SelectElementProps> = ({
     </Element>
   );
 };
+
 const Tab4: React.FC = () => {
+  const { t } = useTranslation();
   const logged = useContext(AuthContext);
 
   const [updateProgress, setUpdateProgress] = useState<boolean>(
-    STORE.get('update_progress') as boolean,
+    (STORE.get('update_progress') as boolean) || false
   );
   const [watchDubbed, setWatchDubbed] = useState<boolean>(
-    STORE.get('dubbed') as boolean,
+    (STORE.get('dubbed') as boolean) || false
   );
   const [selectedLanguage, setSelectedLanguage] = useState<string>(
-    STORE.get('source_flag') as string,
+    (STORE.get('source_flag') as string) || 'en'
   );
   const [skipTime, setSkipTime] = useState<number>(
-    STORE.get('intro_skip_time') as number,
+    (STORE.get('intro_skip_time') as number) || 60
   );
   const [showDuration, setShowDuration] = useState<boolean>(
-    STORE.get('show_duration') as boolean,
+    (STORE.get('show_duration') as boolean) || false
   );
 
   const handleUpdateProgressChange = () => {
@@ -117,16 +113,17 @@ const Tab4: React.FC = () => {
   };
 
   const handleSkipTimeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    STORE.set('intro_skip_time', parseInt(event.target.value));
-    setSkipTime(parseInt(event.target.value));
+    const value = parseInt(event.target.value);
+    STORE.set('intro_skip_time', value);
+    setSkipTime(value);
   };
 
   const handleShowDurationChange = () => {
-    STORE.set('dubbed', !showDuration);
+    STORE.set('show_duration', !showDuration);
     setShowDuration(!showDuration);
   };
 
-  const languageOptions: Option[] = [
+  const episodeLanguageOptions: Option[] = [
     { value: 'US', label: 'English' },
     { value: 'IT', label: 'Italian' },
   ];
@@ -143,40 +140,41 @@ const Tab4: React.FC = () => {
   ];
 
   return (
-    <div className="body-container  show-tab">
+    <div className="body-container show-tab">
       <div className="main-container">
         <div className="settings-page">
-        <Heading text='Settings' />
+          <Heading text={t('Settings')} />
 
           {logged && (
             <CheckboxElement
-              label="Update progress automatically"
+              label={t('Update progress automatically')}
               checked={updateProgress}
               onChange={handleUpdateProgressChange}
             />
           )}
           <CheckboxElement
-            label="Watch dubbed"
+            label={t('Watch dubbed')}
             checked={watchDubbed}
             onChange={handleWatchDubbedChange}
           />
           <SelectElement
-            label="Select the language in which you want to watch the episodes"
+            label={t('Select the language in which you want to watch the episodes')}
             value={selectedLanguage}
-            options={languageOptions}
+            options={episodeLanguageOptions}
             onChange={handleLanguageChange}
           />
           <SelectElement
-            label="Select the duration of the intro skip (in seconds)"
+            label={t('Select the duration of the intro skip (in seconds)')}
             value={skipTime}
             options={skipTimeOptions}
             onChange={handleSkipTimeChange}
           />
           <CheckboxElement
-            label="Display the video duration instead of the remaining time."
+            label={t('Display the video duration instead of the remaining time.')}
             checked={showDuration}
             onChange={handleShowDurationChange}
           />
+          <LanguageSwitcher />
         </div>
       </div>
     </div>

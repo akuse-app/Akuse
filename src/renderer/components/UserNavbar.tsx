@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ipcRenderer } from 'electron';
 import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../App';
 
 interface LiProps {
@@ -18,10 +19,13 @@ interface LiProps {
 }
 
 const Li: React.FC<LiProps> = ({ text, icon, onClick, link = false }) => {
+  const { t } = useTranslation();
+
   return (
     <li onClick={onClick} style={{ cursor: link ? 'default' : 'pointer' }}>
       <div className="i-wrapper">
         <FontAwesomeIcon className="i" icon={icon} />
+        <span>{t(text)}</span>
       </div>
     </li>
   );
@@ -32,6 +36,7 @@ interface UserNavbarProps {
 }
 
 const UserNavbar: React.FC<UserNavbarProps> = ({ avatar }) => {
+  const { t } = useTranslation();
   const logged = useContext(AuthContext);
 
   return (

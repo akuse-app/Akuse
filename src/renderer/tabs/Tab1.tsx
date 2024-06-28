@@ -1,16 +1,13 @@
-import { userInfo } from 'os';
-import { useEffect } from 'react';
-import { useContext } from 'react';
-
+import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ListAnimeData, UserInfo } from '../../types/anilistAPITypes';
 import { AuthContext } from '../App';
 import AnimeSection from '../components/AnimeSection';
-import Heading from '../components/Heading';
 import Slideshow from '../components/Slideshow';
 import UserNavbar from '../components/UserNavbar';
 
 interface Tab1Props {
-  userInfo?: UserInfo
+  userInfo?: UserInfo;
   currentListAnime?: ListAnimeData[];
   trendingAnime?: ListAnimeData[];
   mostPopularAnime?: ListAnimeData[];
@@ -25,27 +22,24 @@ const Tab1: React.FC<Tab1Props> = ({
   nextReleasesAnime,
 }) => {
   const logged = useContext(AuthContext);
+  const { t } = useTranslation();
 
   return (
-    <div className="body-container  show-tab">
+    <div className="body-container show-tab">
       <div className="main-container">
         <main>
-          {/* {logged ? <Heading text={`Welcome back, ${userInfo?.name}`} /> : <Heading text={`Welcome back`} />} */}
-
-          {/* <UserNavbar avatar={userInfo?.avatar?.medium} /> */}
-
           <Slideshow listAnimeData={trendingAnime} />
 
           <div className="section-container">
             {logged && (
               <AnimeSection
-                title="Continue Watching"
+                title={t('continue_watching')}
                 animeData={currentListAnime}
               />
             )}
-            <AnimeSection title="Trending Now" animeData={trendingAnime} />
-            <AnimeSection title="Most Popular" animeData={mostPopularAnime} />
-            <AnimeSection title="Next Releases" animeData={nextReleasesAnime} />
+            <AnimeSection title={t('trending_now')} animeData={trendingAnime} />
+            <AnimeSection title={t('most_popular')} animeData={mostPopularAnime} />
+            <AnimeSection title={t('next_releases')} animeData={nextReleasesAnime} />
           </div>
         </main>
       </div>

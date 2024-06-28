@@ -1,9 +1,10 @@
 import './styles/AnimeEntry.css';
 
 import { faCalendar, faCircleDot } from '@fortawesome/free-regular-svg-icons';
-import { faHourglass1, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faTv } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   getAvailableEpisodes,
@@ -21,8 +22,8 @@ const StatusDot: React.FC<{
 }> = ({ listAnimeData }) => {
   return (
     <>
-      {(listAnimeData?.media.mediaListEntry?.status == 'CURRENT' ||
-        listAnimeData?.media.mediaListEntry?.status == 'REPEATING') &&
+      {(listAnimeData?.media.mediaListEntry?.status === 'CURRENT' ||
+        listAnimeData?.media.mediaListEntry?.status === 'REPEATING') &&
       listAnimeData.media.mediaListEntry.progress !==
         getAvailableEpisodes(listAnimeData.media) ? (
         <span className="up_to_date">
@@ -59,9 +60,11 @@ const StatusDot: React.FC<{
 const AnimeEntry: React.FC<{
   listAnimeData?: ListAnimeData;
 }> = ({ listAnimeData }) => {
-  // wether the modal is shown or not
+  const { t } = useTranslation();
+
+  // Whether the modal is shown or not
   const [showModal, setShowModal] = useState<boolean>(false);
-  // wether the modal has been opened at least once (used to fetch episodes info only once when opening it)
+  // Whether the modal has been opened at least once (used to fetch episodes info only once when opening it)
   const [hasModalBeenShowed, setHasModalBeenShowed] = useState<boolean>(false);
 
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -93,7 +96,7 @@ const AnimeEntry: React.FC<{
           >
             <img
               src={listAnimeData.media.coverImage?.large}
-              alt="anime cover"
+              alt={t('animeCoverAlt', { title: getTitle(listAnimeData.media) })}
               onLoad={() => {
                 setImageLoaded(true);
               }}

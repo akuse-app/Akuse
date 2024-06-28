@@ -1,0 +1,20 @@
+{
+    "welcome_back": "Welcome back",
+    "continue_watching": "Continue Watching",
+    "trending_now": "Trending Now",
+    "most_popular": "Most Popular",
+    "next_releases": "Next Releases",
+    "animeCoverAlt": "anime cover for {{title}}",
+    "continueWatching": "Continue Watching",
+    "trendingNow": "Trending Now",
+    "mostPopular": "Most Popular",
+    "nextReleases": "Next Releases",
+    "Select Language": "Select Language",
+    "watchNow": "Watch now",
+    "moreInfo": "More info",
+    "episodes": "Episodes",
+    "sourceNotFound": "Source not found",
+    "Sponsor": "Sponsor",
+    "Report a bug": "Report a bug",
+    "Login": "Login"
+}

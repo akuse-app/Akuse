@@ -8,7 +8,7 @@ import {
 } from '../../types/anilistAPITypes';
 import { MediaListStatus } from '../../types/anilistGraphQLTypes';
 import { ClientData } from '../../types/types';
-import { clientData } from '../clientData';
+import { clientData } from '../clientData.ts';
 import { getOptions, makeRequest } from '../requests';
 import isAppImage from '../packaging/isAppImage';
 import { app, ipcRenderer } from 'electron';
