@@ -1,0 +1,234 @@
+
+.airing-list .anime-entry {
+  z-index: 50;
+  width: 292px;
+  height: 125px;
+  display: flex;
+  cursor: pointer;
+  overflow: hidden;
+
+  flex-direction: row;
+  border-radius: 0.5rem;
+  transition: var(--transition);
+  background-color: var(--color-2);
+}
+
+.airing-list .anime-entry:hover {
+  transform: scale(0.96, 0.96);
+}
+
+.airing-list .anime-entry .anime-cover {
+  width: 100px;
+  height: 150px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.airing-list .anime-entry .anime-cover img {
+  width: 100%;
+  height: 100%;
+}
+
+.airing-list .anime-entry .content {
+  gap: 6px;
+  display: flex;
+  padding: 0.5rem;
+  padding-left: 0.8rem;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.airing-list .anime-entry .anime-title {
+  font-size: 1rem;
+  color: var(--font-1);
+  font-weight: 800;
+  min-height: fit-content;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.airing-list .anime-entry .anime-title span {
+  margin-right: 0px;
+  font-size: 1rem;
+}
+
+.airing-list .anime-entry .anime-title span.up_to_date {
+  color: var(--color-info);
+}
+
+.airing-list .anime-entry .anime-title span.releasing {
+  color: var(--color-success);
+}
+
+.airing-list .anime-entry .anime-title span.not_yet_released {
+  color: var(--color-alert);
+}
+
+.airing-list .anime-entry .anime-info {
+  gap: 5px;
+  display: flex;
+  font-size: 0.9rem;
+  color: var(--font-3);
+  flex-direction: column;
+  font-weight: var(--font-weight);
+}
+
+
+
+/* .anime-list .anime-entry {
+  position: relative;
+  width: 175px;
+  height: min-content;
+  margin-top: 10px;
+  margin-left: 1rem;
+  transition: 0.2s ease-out;
+  border-radius: var(--border-radius);
+  will-change: transform;
+}
+
+.anime-list .anime-entry:not(.skeleton) {
+  cursor: pointer;
+}
+
+.anime-list .anime-entry:not(.skeleton):hover {
+  transform: scale(1.05);
+}
+
+.anime-list .anime-entry:not(.skeleton):hover .anime-cover {
+  outline: 2px solid var(--font-1);
+}
+
+.anime-list .anime-entry .content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: 50%;
+  bottom: 0;
+  margin-top: 10px;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  z-index: 3;
+}
+
+.anime-list .anime-entry .anime-cover {
+  height: 262.5px;
+  position: relative;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.anime-list .anime-entry .anime-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.anime-list .anime-entry.disabled {
+  border: 3px dashed var(--color-3);
+  color: var(--color-3);
+  font-weight: var(--font-weight);
+  border-radius: var(--border-radius);
+  cursor: auto;
+}
+
+.anime-list .anime-entry .anime-cover.disabled {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.anime-list .anime-entry .anime-cover .anime-cover-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0px -50px 18px -22px #00000093;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.anime-list .anime-entry .anime-title {
+  font-size: 1rem;
+  color: var(--font-1);
+  font-weight: 800;
+  min-height: fit-content;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.anime-list .anime-entry .anime-title span {
+  margin-right: 0px;
+  font-size: 1rem;
+}
+
+.anime-list .anime-entry .anime-title span.up_to_date {
+  color: var(--color-info);
+}
+
+.anime-list .anime-entry .anime-title span.releasing {
+  color: var(--color-success);
+}
+
+.anime-list .anime-entry .anime-title span.not_yet_released {
+  color: var(--color-alert);
+}
+
+.anime-list .anime-entry .anime-info {
+  display: flex;
+  gap: 5px;
+  font-size: 1rem;
+  color: var(--font-3);
+  font-weight: var(--font-weight);
+}
+
+.anime-list .anime-entry .anime-info .i {
+  font-size: 1.1rem;
+}
+
+.anime-list .anime-entry .anime-info .season-year {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  height: 100%;
+  width: 75%;
+}
+
+.anime-list .anime-entry .anime-info .episodes {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  text-align: end;
+}
+
+
+.anime-list .anime-entry .anime-info .listed-episodes {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  height: 100%;
+  width: 75%;
+}
+
+.anime-list .anime-entry .anime-info .anime-score {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  text-align: end;
+}
+
+.anime-list .anime-entry .anime-progress {
+  color: var(--font-3);
+  font-size: 1rem;
+  font-weight: var(--font-weight);
+} */

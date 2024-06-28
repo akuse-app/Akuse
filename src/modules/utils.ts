@@ -3,6 +3,7 @@ import Store from 'electron-store';
 import { AnimeData, ListAnimeData } from '../types/anilistAPITypes';
 import { Media, MediaFormat, MediaStatus } from '../types/anilistGraphQLTypes';
 import { animeCustomTitles } from '../modules/animeCustomTitles';
+import { getAiringList } from './anilist/anilistApi';
 
 const STORE = new Store();
 const MONTHS = {
@@ -383,4 +384,114 @@ export const toggleIFrameMute = (iFrame: HTMLIFrameElement, mute: boolean) => {
     }),
     '*',
   );
+};
+
+export const getAiringSchedule = async () => {
+  const now = new Date();
+
+  now.setHours(0, 0, 0, 0);
+  const dayInSeconds = 86400;
+  const yesterdayStart = Math.floor(now.getTime() / 1000) - dayInSeconds;
+  const weekStart = yesterdayStart;
+  const weekEnd = weekStart + 604800;
+
+  const airingSchedules = [];
+
+  for (let page = 1; page < 5; page++) {
+    const schedules = await getAiringList(weekStart, weekEnd, page);
+
+    if (schedules.length === 0) {
+      break;
+    }
+
+    airingSchedules.push(...schedules);
+  }
+
+  const timestampToDay = (timestamp: any) => {
+    const options: any = { weekday: "long" };
+    return new Date(timestamp * 1000).toLocaleDateString(undefined, options);
+  };
+
+  const scheduleByDay: any = {};
+  airingSchedules.forEach((schedule) => {
+    const day = timestampToDay(schedule.airingAt);
+    if (!scheduleByDay[day]) {
+      scheduleByDay[day] = [];
+    }
+    scheduleByDay[day].push(schedule);
+  });
+
+  return scheduleByDay;
+};
+
+export const transformSchedule = (schedule: any) => {
+  const formattedSchedule: any = {};
+
+  for (const day of Object.keys(schedule)) {
+    formattedSchedule[day] = {};
+
+    for (const scheduleItem of schedule[day]) {
+      const time = scheduleItem.airingAt;
+
+      if (!formattedSchedule[day][time]) {
+        formattedSchedule[day][time] = [];
+      }
+
+      formattedSchedule[day][time].push(scheduleItem);
+    }
+  }
+
+  return formattedSchedule;
+};
+
+export const filterFormattedSchedule = (formattedSchedule: any, filterDay: string) => {
+  if (filterDay === "All") return formattedSchedule;
+
+  if (formattedSchedule.hasOwnProperty(filterDay)) {
+    return {
+      [filterDay]: formattedSchedule[filterDay],
+    };
+  }
+
+  return {};
+};
+
+export const filterScheduleByDay = (sortedSchedule: any, filterDay: string) => {
+  if (filterDay === "All") return sortedSchedule;
+  const filteredSchedule: any = {};
+
+  for (const day in sortedSchedule) {
+    if (day === filterDay) {
+      filteredSchedule[day] = sortedSchedule[day];
+    }
+  }
+
+  return filteredSchedule;
+};
+
+export const timeStamptoHour = (timestamp: any) => {
+  const options: any = { hour: "numeric", minute: "numeric", hour12: true };
+  const currentTime = new Date().getTime() / 1000;
+  const formattedTime = new Date(timestamp * 1000).toLocaleTimeString(
+    undefined,
+    options
+  );
+  const status = timestamp <= currentTime ? "Aired" : "Airing";
+
+  return `${status} at ${formattedTime}`;
+};
+
+export const timeStamptoAMPM = (timestamp: any) => {
+  const date = new Date(timestamp * 1000);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+
+  return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+};
+
+export const isAired = (timestamp: any) => {
+  const currentTime = new Date().getTime() / 1000;
+  return timestamp <= currentTime;
 };

@@ -1,235 +1,183 @@
-import 'react-activity/dist/Dots.css';
-
-import {
-  faDisplay,
-  faFilter,
-  faHeading,
-  faLeaf,
-  faMasksTheater,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useState } from 'react';
-import Dots from 'react-activity/dist/Dots';
-
-import { FORMATS, GENRES, SEASONS, SORTS } from '../../constants/anilist';
-import { searchFilteredAnime } from '../../modules/anilist/anilistApi';
-import { animeDataToListAnimeData } from '../../modules/utils';
-import { ListAnimeData } from '../../types/anilistAPITypes';
-import { ViewerIdContext } from '../App';
-import AnimeEntry from '../components/AnimeEntry';
+import Store from 'electron-store';
+import { ContentSteeringController } from 'hls.js';
+import React, { ChangeEvent, useContext, useState } from 'react';
+import { AuthContext } from '../App';
 import Heading from '../components/Heading';
-import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-const Tab3 = () => {
-  const viewerId = useContext(ViewerIdContext);
+const STORE = new Store();
 
-  const [selectedTitle, setSelectedTitle] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('');
-  const [selectedSeason, setSelectedSeason] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
-  const [selectedFormat, setSelectedFormat] = useState('');
-  const [selectedSort, setSelectedSort] = useState('');
+// Interfaccia per definire la struttura delle opzioni del select
+interface Option {
+  value: string;
+  label: string;
+}
 
-  const [searchedAnime, setSearchedAnime] = useState<
-    ListAnimeData[] | undefined
-  >([]);
+// Props per il componente Element
+interface ElementProps {
+  label: string;
+  children: React.ReactNode;
+}
 
-  const handleTitleChange = (event: any) => {
-    setSelectedTitle(event.target.value);
+// Componente generico per gli elementi
+const Element: React.FC<ElementProps> = ({ label, children }) => {
+  return (
+    <div className="element">
+      <div className="toggler">
+        <p>{label}</p>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// Props per il componente CheckboxElement
+interface CheckboxElementProps {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}
+
+// Componente per gestire gli elementi con i checkbox
+const CheckboxElement: React.FC<CheckboxElementProps> = ({
+  label,
+  checked,
+  onChange,
+}) => {
+  return (
+    <Element label={label}>
+      <label className="switch">
+        <input type="checkbox" checked={checked} onChange={onChange} />
+        <span className="slider round"></span>
+      </label>
+    </Element>
+  );
+};
+
+// Props per il componente SelectElement
+interface SelectElementProps {
+  label: string;
+  value: number | string;
+  options: Option[];
+  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+}
+
+// Componente per gestire gli elementi con i select
+const SelectElement: React.FC<SelectElementProps> = ({
+  label,
+  value,
+  options,
+  onChange,
+}) => {
+  return (
+    <Element label={label}>
+      <label>
+        <select className="main-select-0" value={value} onChange={onChange}>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    </Element>
+  );
+};
+const Tab3: React.FC = () => {
+  const logged = useContext(AuthContext);
+
+  const [updateProgress, setUpdateProgress] = useState<boolean>(
+    STORE.get('update_progress') as boolean,
+  );
+  const [watchDubbed, setWatchDubbed] = useState<boolean>(
+    STORE.get('dubbed') as boolean,
+  );
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(
+    STORE.get('source_flag') as string,
+  );
+  const [skipTime, setSkipTime] = useState<number>(
+    STORE.get('intro_skip_time') as number,
+  );
+  const [showDuration, setShowDuration] = useState<boolean>(
+    STORE.get('show_duration') as boolean,
+  );
+
+  const handleUpdateProgressChange = () => {
+    STORE.set('update_progress', !updateProgress);
+    setUpdateProgress(!updateProgress);
   };
 
-  const handleGenreChange = (event: any) => {
-    setSelectedGenre(event.target.value);
+  const handleWatchDubbedChange = () => {
+    STORE.set('dubbed', !watchDubbed);
+    setWatchDubbed(!watchDubbed);
   };
 
-  const handleSeasonChange = (event: any) => {
-    setSelectedSeason(event.target.value);
+  const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    STORE.set('source_flag', event.target.value);
+    setSelectedLanguage(event.target.value);
   };
 
-  const handleYearChange = (event: any) => {
-    setSelectedYear(event.target.value);
+  const handleSkipTimeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    STORE.set('intro_skip_time', parseInt(event.target.value));
+    setSkipTime(parseInt(event.target.value));
   };
 
-  const handleFormatChange = (event: any) => {
-    setSelectedFormat(event.target.value);
+  const handleShowDurationChange = () => {
+    STORE.set('dubbed', !showDuration);
+    setShowDuration(!showDuration);
   };
 
-  const handleSortChange = (event: any) => {
-    setSelectedSort(event.target.value);
-  };
+  const languageOptions: Option[] = [
+    { value: 'US', label: 'English' },
+    { value: 'IT', label: 'Italian' },
+  ];
 
-  const handleClearClick = () => {
-    setSelectedTitle('');
-    setSelectedGenre('');
-    setSelectedSeason('');
-    setSelectedYear('');
-    setSelectedFormat('');
-    setSelectedSort('');
-  };
-
-  const handleSearchClick = async () => {
-    setSearchedAnime(undefined);
-
-    let title = '';
-    let genre = '';
-    let season = '';
-    let year = '';
-    let format = '';
-    let sort = '';
-
-    let args = [
-      selectedTitle !== ''
-        ? (title = `search: "${selectedTitle}"`)
-        : (title = ''),
-      selectedGenre !== ''
-        ? (genre = `genre: "${selectedGenre}"`)
-        : (genre = ''),
-      selectedSeason !== ''
-        ? (season = `season: ${selectedSeason}`)
-        : (season = ''),
-      selectedYear !== ''
-        ? (year = `seasonYear: ${selectedYear}`)
-        : (year = ''),
-      selectedFormat !== ''
-        ? (format = `format: ${selectedFormat}`)
-        : (format = ''),
-      selectedSort !== '' ? (sort = `sort: ${selectedSort}`) : (sort = ''),
-    ].filter((item) => !(item == ''));
-
-    const parsedArgs = args.concat('type: ANIME').join(', ');
-    setSearchedAnime(
-      animeDataToListAnimeData(await searchFilteredAnime(parsedArgs, viewerId)),
-    );
-  };
-
-  const handleInputKeydown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.keyCode === 229) return;
-
-    if (event.code === 'Enter') handleSearchClick();
-  };
+  const skipTimeOptions: Option[] = [
+    { value: '60', label: '60' },
+    { value: '65', label: '65' },
+    { value: '70', label: '70' },
+    { value: '75', label: '75' },
+    { value: '80', label: '80' },
+    { value: '85', label: '85' },
+    { value: '90', label: '90' },
+    { value: '95', label: '95' },
+  ];
 
   return (
     <div className="body-container  show-tab">
       <div className="main-container">
-        <Heading text="Search" />
-        <main className="search">
-          <div className="filters-container" onKeyDown={handleInputKeydown}>
-            <div className="filter">
-              <h2>
-                <FontAwesomeIcon className="i" icon={faHeading} /> Title
-              </h2>
-              <input
-                type="text"
-                id="search-page-filter-title"
-                placeholder="Search..."
-                value={selectedTitle}
-                onChange={handleTitleChange}
-              />
-            </div>
-            <div className={`filter ${selectedGenre === '' ? '' : 'active'}`}>
-              <h2>
-                <FontAwesomeIcon className="i" icon={faMasksTheater} /> Genre
-              </h2>
-              <select
-                id="search-page-filter-genre"
-                value={selectedGenre}
-                onChange={handleGenreChange}
-                className={selectedGenre === '' ? '' : 'active'}
-              >
-                {GENRES.map((genre) => (
-                  <option key={genre.value} value={genre.value ?? ''}>
-                    {genre.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={`filter ${selectedSeason === '' ? '' : 'active'}`}>
-              <h2>
-                <FontAwesomeIcon className="i" icon={faLeaf} /> Season
-              </h2>
-              <div className="filter-divisor">
-                <select
-                  id="search-page-filter-season"
-                  value={selectedSeason}
-                  onChange={handleSeasonChange}
-                  className={selectedSeason === '' ? '' : 'active'}
-                >
-                  {SEASONS.map((season) => (
-                    <option key={season.value} value={season.value ?? ''}>
-                      {season.label}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="number"
-                  id="search-page-filter-year"
-                  placeholder="Year"
-                  value={selectedYear}
-                  onChange={handleYearChange}
-                />
-              </div>
-            </div>
-            <div className={`filter ${selectedFormat === '' ? '' : 'active'}`}>
-              <h2>
-                <FontAwesomeIcon className="i" icon={faDisplay} /> Format
-              </h2>
-              <select
-                id="search-page-filter-format"
-                value={selectedFormat}
-                onChange={handleFormatChange}
-                className={selectedFormat === '' ? '' : 'active'}
-              >
-                {FORMATS.map((format) => (
-                  <option key={format.value} value={format.value ?? ''}>
-                    {format.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={`filter ${selectedSort === '' ? '' : 'active'}`}>
-              <h2>
-                <FontAwesomeIcon className="i" icon={faFilter} /> Sort
-              </h2>
-              <select
-                id="search-page-filter-sort"
-                value={selectedSort}
-                onChange={handleSortChange}
-                className={selectedSort === '' ? '' : 'active'}
-              >
-                {SORTS.map((sort) => (
-                  <option key={sort.value} value={sort.value ?? ''}>
-                    {sort.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="buttons">
-              {/* <div className="filter">
-                <button id="search-clear" onClick={handleClearClick}>
-                  Clear
-                </button>
-              </div> */}
-              <button id="search-clear" onClick={handleClearClick}>
-                <FontAwesomeIcon className="i" icon={faTrashCan} />
-              </button>
-              <button id="search-submit" onClick={handleSearchClick}>
-                Search
-              </button>
-            </div>
-          </div>
-          <div className="entries-container">
-            {!searchedAnime ? (
-              <div className="activity-indicator">
-                <Dots />
-              </div>
-            ) : (
-              searchedAnime?.map((value, index) => (
-                <AnimeEntry key={index} listAnimeData={value} />
-              ))
-            )}
-          </div>
-        </main>
+        <div className="settings-page">
+        <Heading text='Settings' />
+
+          {logged && (
+            <CheckboxElement
+              label="Update progress automatically"
+              checked={updateProgress}
+              onChange={handleUpdateProgressChange}
+            />
+          )}
+          <CheckboxElement
+            label="Watch dubbed"
+            checked={watchDubbed}
+            onChange={handleWatchDubbedChange}
+          />
+          <SelectElement
+            label="Select the language in which you want to watch the episodes"
+            value={selectedLanguage}
+            options={languageOptions}
+            onChange={handleLanguageChange}
+          />
+          <SelectElement
+            label="Select the duration of the intro skip (in seconds)"
+            value={skipTime}
+            options={skipTimeOptions}
+            onChange={handleSkipTimeChange}
+          />
+          <CheckboxElement
+            label="Display the video duration instead of the remaining time."
+            checked={showDuration}
+            onChange={handleShowDurationChange}
+          />
+        </div>
       </div>
     </div>
   );

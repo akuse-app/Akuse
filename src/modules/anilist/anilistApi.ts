@@ -215,6 +215,113 @@ export const getViewerList = async (
     : respData.data.MediaListCollection.lists[0].entries;
 };
 
+export const getAiringList = async (startWeek: number, endWeek: number, pageNum: number) => {
+  var query = `
+query ($weekStart: Int, $weekEnd: Int, $page: Int) {
+  Page(page: $page) {
+    pageInfo {
+      hasNextPage
+      total
+    }
+    airingSchedules(airingAt_greater: $weekStart, airingAt_lesser: $weekEnd) {
+      id
+      episode
+      airingAt
+      mediaId
+      media {
+          ${MEDIA_DATA}
+        }
+      }
+    }
+  }
+      `;
+
+  var headers = {
+    Authorization: 'Bearer ' + STORE.get('access_token'),
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  var variables = {
+    weekStart: startWeek,
+    weekEnd: endWeek,
+    page: pageNum,
+  };
+
+  const options = getOptions(query, variables);
+
+  const respData = await makeRequest(METHOD, GRAPH_QL_URL, headers, options);
+
+  return respData.data.Page.airingSchedules;
+};
+
+/**
+ * Gets a viewer list (current, completed...)
+ *
+ * @param {*} viewerId
+ * @returns object with anime entries
+ */
+export const getUserInfo = async (viewerId: number) => {
+  var query = `
+query ($userId: Int, $status: MediaListStatus) {
+    MediaListCollection(userId: $userId, type: ANIME, status: $status, sort: UPDATED_TIME_DESC) {
+      user {
+        id
+        name
+        about (asHtml: true)
+        createdAt
+        avatar {
+            large
+        }
+        statistics {
+          anime {
+              count
+              episodesWatched
+              meanScore
+              minutesWatched
+          }
+      }
+        bannerImage
+        mediaListOptions {
+          animeList {
+              sectionOrder
+          }
+        }
+      }
+      lists {
+        status
+        name
+        entries {
+          id
+          mediaId
+          status
+          progress
+          score
+          media {
+            ${MEDIA_DATA}
+          }
+        }
+      }
+    }
+  }
+  `;
+
+  var headers = {
+    Authorization: 'Bearer ' + STORE.get('access_token'),
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  var variables = {
+    userId: viewerId,
+  };
+
+  const options = getOptions(query, variables);
+  const respData = await makeRequest(METHOD, GRAPH_QL_URL, headers, options);
+
+  return respData.data.MediaListCollection;
+};
+
 // NOT WORKING
 export const getFollowingUsers = async (viewerId: any) => {
   var query = `
@@ -295,7 +402,7 @@ export const getTrendingAnime = async (
               media(sort: TRENDING_DESC, type: ANIME) {
                   ${MEDIA_DATA}
               }
-          } 
+          }
       }
       `;
 
@@ -338,7 +445,7 @@ export const getMostPopularAnime = async (
               media(sort: POPULARITY_DESC, type: ANIME) {
                   ${MEDIA_DATA}
               }
-          } 
+          }
       }
       `;
 
@@ -378,7 +485,7 @@ export const getNextReleases = async (viewerId: number | null) => {
               media(status: NOT_YET_RELEASED, sort: POPULARITY_DESC, type: ANIME) {
                   ${MEDIA_DATA}
               }
-          } 
+          }
       }
       `;
 
@@ -422,7 +529,7 @@ export const searchFilteredAnime = async (
               media(${args}) {
                   ${MEDIA_DATA}
               }
-          } 
+          }
       }
       `;
 
@@ -462,7 +569,7 @@ export const releasingAnimes = async () => {
               media(status: RELEASING, sort: POPULARITY_DESC, type: ANIME) {
                   ${MEDIA_DATA}
               }
-          } 
+          }
       }
       `;
 
@@ -492,7 +599,7 @@ export const getAnimesByGenre = async (genre: any, viewerId: number | null) => {
               media(genre: "${genre}", sort: TRENDING_DESC, type: ANIME) {
                   ${MEDIA_DATA}
               }
-          } 
+          }
       }
       `;
 

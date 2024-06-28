@@ -133,6 +133,23 @@ main .anime-entry .anime-info .episodes {
   text-align: end;
 }
 
+
+main .anime-entry .anime-info .listed-episodes {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  height: 100%;
+  width: 75%;
+}
+
+main .anime-entry .anime-info .anime-score {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  text-align: end;
+}
+
 main .anime-entry .anime-progress {
   color: var(--font-3);
   font-size: 1rem;

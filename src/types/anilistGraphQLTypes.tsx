@@ -15,14 +15,14 @@ export type MediaFormat =
   | 'MUSIC'
   | 'MANGA'
   | 'NOVEL'
-  | 'ONE_SHOT'
+  | 'ONE_SHOT';
 
 export type MediaStatus =
   | 'FINISHED'
   | 'RELEASING'
   | 'NOT_YET_RELEASED'
   | 'CANCELLED'
-  | 'HIATUS'
+  | 'HIATUS';
 
 export type FuzzyDate = {
   year?: number;
@@ -30,7 +30,7 @@ export type FuzzyDate = {
   day?: number;
 };
 
-export type MediaSeason = 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL'
+export type MediaSeason = 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL';
 
 export type MediaCoverImage = {
   extraLarge?: string;
@@ -54,7 +54,7 @@ export type MediaListStatus =
   | 'COMPLETED'
   | 'DROPPED'
   | 'PAUSED'
-  | 'REPEATING'
+  | 'REPEATING';
 
 export type MediaList = {
   id: number;
@@ -62,6 +62,47 @@ export type MediaList = {
   status?: MediaListStatus;
   score?: number;
   progress?: number;
+};
+
+export type MediaListCollection = {
+  user: MediaListUserInfo;
+  lists: {
+    status: MediaListStatus;
+    name: string;
+    entries: {
+      id: number;
+      mediaId: number;
+      status: MediaStatus;
+      progress: number;
+      score: number;
+      media: Media;
+    };
+  };
+};
+
+export type MediaListUserInfo = {
+  id: number;
+  name: string;
+  avatar?: {
+    large?: string;
+    medium?: string;
+  };
+  bannerImage: string;
+  createdAt: number;
+  about: string;
+  mediaListOptions: {
+    animeList: {
+      sectionOrder: MediaListStatus;
+    };
+  };
+  statistics?: {
+    anime: {
+      count: number;
+      episodesWatched: number;
+      meanScore: number;
+      minutesWatched: number;
+    };
+  };
 };
 
 export type MediaTrailer = {

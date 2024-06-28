@@ -2,18 +2,18 @@
 
 :root {
   --color-0: #0f1115;
-  --color-1: #1A1D24;
+  --color-1: #1a1d24;
   --color-1b: #1a1d24ea;
-  --color-2: #22252E;
+  --color-2: #22252e;
   --color-3: #2c2e3a;
   --color-4: #32333f;
   --color-important: #ff456d;
   /* #ffc4c9 */
   --color-dark-opacity: rgba(0, 0, 0, 0.6);
-  --color-warning: #FF5454;
-  --color-alert: #E5A639;
-  --color-success: #45AD67;
-  --color-info: #3FA0D0;
+  --color-warning: #ff5454;
+  --color-alert: #e5a639;
+  --color-success: #45ad67;
+  --color-info: #3fa0d0;
 
   --font-1: #f1f2f6;
   --font-2: #bec0cc;
@@ -224,11 +224,11 @@ img {
 }
 
 .auto-update-page .content .buttons button:hover {
-  filter: brightness(0.80);
+  filter: brightness(0.8);
 }
 
 .auto-update-page .content .buttons button:active {
-  filter: brightness(0.70);
+  filter: brightness(0.7);
 }
 
 /* MAIN SECTION */
@@ -313,7 +313,7 @@ main section .scrollers {
 main.search {
   display: flex;
   flex-direction: row;
-  gap: 10px
+  gap: 10px;
 }
 
 main .filters-container {
@@ -456,12 +456,12 @@ main button#search-clear {
 
 main button#search-submit:hover,
 main button#search-clear:hover {
-  filter: brightness(0.90);
+  filter: brightness(0.9);
 }
 
 main button#search-submit:active,
 main button#search-clear:active {
-  filter: brightness(0.80);
+  filter: brightness(0.8);
 }
 
 main .entries-container {
@@ -602,5 +602,124 @@ main .entries-container .anime-entry {
 }
 
 .settings-page button#exit:active {
-  filter: brightness(0.90);
+  filter: brightness(0.9);
+}
+
+.day-list {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.day-filter {
+  color: var(--font-2);
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  transition: var(--transition);
+}
+
+.day-filter:hover {
+  color: var(--color-important);
+}
+
+.day-filter.active {
+  color: var(--color-important);
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.anime-list {
+  gap: 10px;
+  width: 100%;
+  display: grid;
+  position: relative;
+  grid-auto-flow: row;
+}
+
+@media (min-width: 1280px) {
+  .anime-list {
+    grid-template-columns: repeat(6, minmax(0, 0.4fr));
+  }
+}
+
+@media (min-width: 1470px) {
+  .anime-list {
+    grid-template-columns: repeat(7, minmax(0, 0.4fr));
+  }
+}
+
+@media (min-width: 1690px) {
+  .anime-list {
+    grid-template-columns: repeat(8, minmax(0, 0.4fr));
+  }
+}
+
+@media (min-width: 1840px) {
+  .anime-list {
+    grid-template-columns: repeat(9, minmax(0, 0.4fr));
+  }
+}
+
+.airing-list {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-0);
+}
+
+.airing-list .aired {
+  left: 0;
+  width: 0.375rem;
+  height: 0.375rem;
+  position: absolute;
+  border-radius: 9999px;
+  background-color: var(--color-important);
+}
+
+.airing-list .un-aired {
+  left: 0;
+  width: 0.375rem;
+  height: 0.375rem;
+  position: absolute;
+  border-radius: 9999px;
+  background-color: var(--color-3);
+}
+
+.airing-list .aired-line {
+  height: 100%;
+  width: 0.125rem;
+  margin-left: 2px;
+  position: absolute;
+  background-color: var(--color-important);
+}
+
+.airing-list .un-aired-line {
+  height: 100%;
+  width: 0.125rem;
+  margin-left: 2px;
+  position: absolute;
+  background-color: var(--color-3);
+}
+
+.airing-list .section {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.airing-list .section .entry {
+  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, max-content));
+}
+
+.airing-list .airing-time {
+  color: var(--font-1);
+}
+
+.airing-list .airing-entry {
+  gap: 0.5rem;
+  display: flex;
+  margin-left: 1rem;
+  align-items: center;
 }

@@ -1,8 +1,11 @@
 import './styles/MainNavbar.css';
 
-import { faBookmark, faCompass, IconDefinition } from '@fortawesome/free-regular-svg-icons';
 import {
-  faBookmark as faBookmarkFull,
+  faCompass,
+  IconDefinition,
+} from '@fortawesome/free-regular-svg-icons';
+import {
+  faCalendarWeek,
   faCompass as faCompassFull,
   faGear,
   faLaptopCode,
@@ -78,28 +81,26 @@ const MainNavbar: React.FC<{ avatar?: string }> = ({ avatar }) => {
           active={activeTab === 1}
           onClick={() => setActiveTab(1)}
         />
-        {logged && (
-          <Li
-            text="Library"
-            icon={activeTab === 2 ? faBookmarkFull : faBookmark}
-            to="/tab2"
-            active={activeTab === 2}
-            onClick={() => setActiveTab(2)}
-          />
-        )}
         <Li
           text="Search"
-          icon={activeTab === 3 ? faMagnifyingGlassPlus : faMagnifyingGlass}
+          icon={activeTab === 2 ? faMagnifyingGlassPlus : faMagnifyingGlass}
+          to="/tab2"
+          active={activeTab === 2}
+          onClick={() => setActiveTab(2)}
+        />
+        <Li
+          text="Settings"
+          icon={faGear}
           to="/tab3"
           active={activeTab === 3}
           onClick={() => setActiveTab(3)}
         />
         <Li
-          text="Settings"
-          icon={faGear}
-          to="/tab4"
-          active={activeTab === 4}
-          onClick={() => setActiveTab(4)}
+          text="Schedule"
+          icon={faCalendarWeek}
+          to="/tab5"
+          active={activeTab === 5}
+          onClick={() => setActiveTab(5)}
         />
         {logged ? (
           <>
